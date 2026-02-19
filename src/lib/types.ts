@@ -20,16 +20,6 @@ export interface ClientInfo {
 
 export type SaleStatus = "PENDING" | "PAID" | "CANCELLED" | "RETURNED"
 
-export interface Sale {
-  id: number
-  items: SaleItem[]
-  totalPrice: number
-  date: string
-  status: SaleStatus
-  client: ClientInfo
-  paidAt: string | null
-}
-
 export interface Product {
   id: number
   name: string
@@ -117,12 +107,107 @@ export interface CreateProductPayload {
   category: string
 }
 
-export interface UpdateProductPayload {
+
+export interface LoginPayload {
+  email: string
+  password: string
+}
+
+export interface RegisterPayload {
+  name: string
+  email: string
+  password: string
+}
+
+export interface AuthResponse {
+  token: string
+}
+
+export interface CheckoutResponse {
+  checkoutUrl: string
+}
+
+// =========================================================
+// Dashlyze - Type Definitions
+// =========================================================
+
+export interface SaleItem {
+  productId: number
+  productName: string
+  quantity: number
+  unitPrice: number
+  totalPrice: number
+}
+
+export interface ClientInfo {
+  id: number
+  name: string
+  email: string
+  phone: string
+  document: string
+}
+
+
+export interface Sale {
+  id: number
+  items: SaleItem[]
+  totalPrice: number
+  date: string
+  status: SaleStatus
+  client: ClientInfo | null // 🔥 corrigido para evitar erro
+  paidAt: string | null
+}
+
+export interface Product {
+  id: number
   name: string
   description: string
   price: number
   quantity: number
   cover: string
+  active: boolean
+  category: string
+  customCategory: string | null
+}
+
+// 🔥 Atualização parcial automática baseada no Product
+export type UpdateProductPayload = Partial<
+  Omit<Product, "id">
+>
+
+export interface CreateProductPayload {
+  name: string
+  description: string
+  price: number
+  quantity: number
+  cover: string
+  category: string
+}
+
+export interface BestSellingProduct {
+  productId: number
+  name: string
+  totalQuantity: number
+  totalRevenue: number
+  buyers: {
+    clientId: number
+    name: string
+    quantity: number
+    totalPaid: number
+  }[]
+}
+
+export interface CreateSalePayload {
+  client: {
+    name: string
+    email: string
+    phone: string
+    document: string
+  }
+  items: {
+    productId: number
+    quantity: number
+  }[]
 }
 
 export interface LoginPayload {
@@ -143,3 +228,4 @@ export interface AuthResponse {
 export interface CheckoutResponse {
   checkoutUrl: string
 }
+

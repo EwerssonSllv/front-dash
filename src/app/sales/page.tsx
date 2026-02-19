@@ -11,6 +11,7 @@ import {
   CreditCard,
   Undo2,
   Trash2,
+  UserX,
 } from "lucide-react"
 import { toast } from "sonner"
 import { DashboardShell } from "../../components/layout/dashboard-shell"
@@ -45,9 +46,6 @@ function SaleTable({
           <thead>
             <tr className="border-b border-border text-left">
               <th className="px-6 py-4 font-medium text-muted-foreground">
-                ID
-              </th>
-              <th className="px-6 py-4 font-medium text-muted-foreground">
                 Cliente
               </th>
               <th className="px-6 py-4 font-medium text-muted-foreground">
@@ -73,17 +71,25 @@ function SaleTable({
                 key={sale.id}
                 className="border-b border-border last:border-0"
               >
-                <td className="px-6 py-4 font-mono text-xs text-muted-foreground">
-                  #{sale.id}
-                </td>
+
                 <td className="px-6 py-4">
-                  <p className="font-medium text-foreground">
-                    {sale.client.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {sale.client.email}
-                  </p>
+                  {sale.client ? (
+                    <>
+                      <p className="font-medium text-foreground">
+                        {sale.client.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {sale.client.email}
+                      </p>
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <UserX className="h-4 w-4" />
+                      <span>Não informado</span>
+                    </div>
+                  )}
                 </td>
+
                 <td className="px-6 py-4 text-muted-foreground">
                   {sale.items.length}{" "}
                   {sale.items.length === 1 ? "item" : "itens"}

@@ -1,73 +1,58 @@
-import { BarChart3 } from "lucide-react"
-import Link from "next/link"
-
-const footerLinks = {
-  Produto: [
-    { label: "Beneficios", href: "#beneficios" },
-    { label: "Analytics", href: "#analytics" },
-    { label: "Seguranca", href: "#seguranca" },
-    { label: "Planos", href: "#planos" },
-  ],
-  Empresa: [
-    { label: "Sobre", href: "#" },
-    { label: "Blog", href: "#" },
-    { label: "Carreiras", href: "#" },
-    { label: "Contato", href: "#" },
-  ],
-  Legal: [
-    { label: "Termos de Uso", href: "#" },
-    { label: "Privacidade", href: "#" },
-    { label: "Cookies", href: "#" },
-  ],
-}
+import Image from "next/image";
+import logoDash from "../../images/Dash.png"
 
 export function Footer() {
-  return (
-    <footer className="border-t border-border bg-muted/30">
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
-          <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-                <BarChart3 className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="font-heading text-xl font-bold text-foreground">
-                Dashlyze
-              </span>
-            </Link>
-            <p className="mt-4 max-w-sm leading-relaxed text-muted-foreground">
-              SaaS completo para gerenciar produtos, clientes e metricas
-              financeiras do seu negocio.
-            </p>
-          </div>
+    return (
+        <footer className="bg-gray-900 text-gray-400 py-12">
+            <div className="container mx-auto px-4">
+                <div className="grid md:grid-cols-4 gap-8 mb-8">
+                    <div>
+                        <div className="flex items-center -mb-1 gap-2">
+                            <Image
+                                src={logoDash}
+                                alt="Logo"
+                                height={90}
+                                className="-ml-10 "
+                            />
+                            <span className="-ml-10 text-xl font-bold text-white">Dashlyze</span>
+                        </div>
+                        <p className="text-gray-400">
+                            Gestão inteligente de estoque e vendas para o seu negócio
+                        </p>
+                    </div>
 
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="font-heading text-sm font-semibold text-foreground">
-                {category}
-              </h4>
-              <ul className="mt-4 flex flex-col gap-3">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+                    <div>
+                        <h4 className="text-white font-semibold mb-4">Produto</h4>
+                        <ul className="space-y-2">
+                            <li><a href="#" className="hover:text-white transition-colors">Funcionalidades</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Preços</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Integrações</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 className="text-white font-semibold mb-4">Empresa</h4>
+                        <ul className="space-y-2">
+                            <li><a href="#" className="hover:text-white transition-colors">Sobre</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Carreiras</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 className="text-white font-semibold mb-4">Suporte</h4>
+                        <ul className="space-y-2">
+                            <li><a href="#" className="hover:text-white transition-colors">Central de Ajuda</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Contato</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="border-t border-gray-800 pt-8 text-center">
+                    <p>&copy; 2026 Dashlyze. Todos os direitos reservados.</p>
+                </div>
             </div>
-          ))}
-        </div>
-
-        <div className="mt-12 border-t border-border pt-8">
-          <p className="text-center text-sm text-muted-foreground">
-            {`\u00A9 ${new Date().getFullYear()} Dashlyze. Todos os direitos reservados.`}
-          </p>
-        </div>
-      </div>
-    </footer>
-  )
+        </footer>
+    )
 }

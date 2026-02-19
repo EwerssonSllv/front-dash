@@ -22,19 +22,20 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
     if (!email || !password) {
       toast.error("Preencha todos os campos")
       return
     }
 
     setLoading(true)
+
     try {
-      // CORRECAO: Chamada vai pelo proxy /api/proxy/auth/login.
-      // O proxy reescreve o Set-Cookie do Spring Boot para o dominio
-      // do Next.js, garantindo que o middleware consiga ler o cookie.
       await authService.login({ email, password })
+
       toast.success("Login realizado com sucesso!")
-      router.refresh() // Re-roda middleware com o novo cookie
+
+      // 🔥 IMPORTANTE: apenas replace, sem refresh
       router.replace(redirect)
     } catch (err) {
       toast.error(
@@ -77,7 +78,7 @@ export default function LoginPage() {
             Entrar na sua conta
           </h1>
           <p className="mt-2 text-muted-foreground">
-            {"Digite suas credenciais para acessar o dashboard"}
+            Digite suas credenciais para acessar o dashboard
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5">
@@ -135,7 +136,7 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            {"Nao tem uma conta? "}
+            Não tem uma conta?{" "}
             <Link
               href="/register"
               className="font-medium text-primary hover:underline"

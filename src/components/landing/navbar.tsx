@@ -4,6 +4,8 @@ import Link from "next/link"
 import { useState } from "react"
 import { Menu, X, BarChart3 } from "lucide-react"
 import { Button } from "../../components/ui/button"
+import Image from "next/image"
+import logoDash from "../../images/Dash.png"
 
 const navLinks = [
   { label: "Beneficios", href: "#beneficios" },
@@ -17,13 +19,17 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-            <BarChart3 className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="font-heading text-xl font-bold text-foreground">
-            Dashlyze
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2">
+        <Link href="/" className="flex items-center text-3xl font-medium text-zinc-900">
+          <Image
+            src={logoDash}
+            alt="Logo Dashlyze"
+            width={90}
+            height={40}
+            quality={100}
+          />
+          <span className="-ml-5 mb-2 text-gray-800">
+            Dash<span className="text-[#2B3A67]">lyze</span>
           </span>
         </Link>
 

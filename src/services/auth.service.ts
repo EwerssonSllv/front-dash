@@ -1,29 +1,20 @@
-// =========================================================
-// Dashlyze - Auth Service
-// ---------------------------------------------------------
-// Alteracao: Adicionado credentials: 'include' em todas as
-// chamadas para que o Spring Boot leia/escreva o cookie
-// HTTP-only "dashlyze_token" diretamente.
-// Adicionado endpoints: refresh() e logout().
-// Register agora retorna AuthResponse (login automatico).
-// =========================================================
+// services/authService.ts
+import type { LoginPayload, RegisterPayload, AuthResponse } from "../lib/types";
 
-import type { LoginPayload, RegisterPayload, AuthResponse } from "../lib/types"
-
-// CORRECAO: Usa proxy same-origin para que cookies funcionem
-const PROXY_URL = "/api/proxy"
+const PROXY_URL = "/api/proxy";
 
 export const authService = {
   async login(payload: LoginPayload): Promise<void> {
-    const res = await fetch("/api/proxy/auth/login", {
+    const res = await fetch(`${PROXY_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-    })
+      credentials: "include", // envia cookie HTTP-only
+    });
 
     if (!res.ok) {
-      const msg = await res.text()
-      throw new Error(msg || "Erro no login")
+      const msg = await res.text();
+      throw new Error(msg || "Erro no login");
     }
   },
 
@@ -33,12 +24,14 @@ export const authService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       credentials: "include",
-    })
+    });
+
     if (!res.ok) {
-      const msg = await res.text().catch(() => "Erro ao registrar")
-      throw new Error(msg || "Erro ao criar conta")
+      const msg = await res.text().catch(() => "Erro ao registrar");
+      throw new Error(msg || "Erro ao criar conta");
     }
-    return res.json()
+
+    return res.json();
   },
 
   async refresh(): Promise<boolean> {
@@ -46,10 +39,10 @@ export const authService = {
       const res = await fetch(`${PROXY_URL}/auth/refresh`, {
         method: "POST",
         credentials: "include",
-      })
-      return res.ok
+      });
+      return res.ok;
     } catch {
-      return false
+      return false;
     }
   },
 
@@ -57,6 +50,6 @@ export const authService = {
     await fetch(`${PROXY_URL}/auth/logout`, {
       method: "POST",
       credentials: "include",
-    })
+    });
   },
-}
+};

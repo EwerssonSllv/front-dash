@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "../../components/ui/button"
@@ -19,7 +19,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription
+  DialogDescription,
 } from "../../components/ui/dialog"
 import { productsService } from "../../services/product.service"
 import type { Product } from "../../lib/types"
@@ -49,31 +49,72 @@ export function ProductForm({
 }: ProductFormProps) {
   const isEditing = !!product
 
-  const [name, setName] = useState(product?.name ?? "")
-  const [description, setDescription] = useState(product?.description ?? "")
-  const [price, setPrice] = useState(product?.price?.toString() ?? "")
-  const [quantity, setQuantity] = useState(product?.quantity?.toString() ?? "")
-  const [cover, setCover] = useState(product?.cover ?? "")
-  const [category, setCategory] = useState(product?.category ?? "")
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("")
+  const [price, setPrice] = useState("")
+  const [quantity, setQuantity] = useState("")
+  const [cover, setCover] = useState("")
+  const [category, setCategory] = useState("")
   const [loading, setLoading] = useState(false)
+
+  // 🔥 Sincroniza quando abrir ou mudar product
+  useEffect(() => {
+    if (product) {
+      setName(product.name ?? "")
+      setDescription(product.description ?? "")
+      setPrice(product.price?.toString() ?? "")
+      setQuantity(product.quantity?.toString() ?? "")
+      setCover(product.cover ?? "")
+      setCategory(product.category ?? "")
+    } else {
+      resetForm()
+    }
+  }, [product, open])
+
+  const resetForm = () => {
+    setName("")
+    setDescription("")
+    setPrice("")
+    setQuantity("")
+    setCover("")
+    setCategory("")
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name || !price || !quantity || !category) {
-      toast.error("Preencha todos os campos obrigatorios")
-      return
+
+    // 🔥 validação apenas na criação
+    if (!isEditing) {
+      if (!name || !price || !quantity || !category) {
+        toast.error("Preencha todos os campos obrigatórios")
+        return
+      }
     }
 
     setLoading(true)
+
     try {
       if (isEditing && product) {
-        await productsService.update(product.id, {
-          name,
-          description,
-          price: parseFloat(price),
-          quantity: parseInt(quantity),
-          cover,
-        })
+        // 🔥 monta payload dinâmico (PATCH real)
+        const payload: any = {}
+
+        if (name !== product.name) payload.name = name
+        if (description !== product.description)
+          payload.description = description
+        if (price !== product.price?.toString() && price !== "")
+          payload.price = parseFloat(price)
+        if (quantity !== product.quantity?.toString() && quantity !== "")
+          payload.quantity = parseInt(quantity)
+        if (cover !== product.cover) payload.cover = cover
+
+        if (Object.keys(payload).length === 0) {
+          toast.info("Nenhuma alteração realizada")
+          setLoading(false)
+          return
+        }
+
+        await productsService.update(product.id, payload)
+
         toast.success("Produto atualizado!")
       } else {
         await productsService.create({
@@ -84,10 +125,13 @@ export function ProductForm({
           cover,
           category,
         })
+
         toast.success("Produto criado!")
       }
+
       onSuccess()
       onClose()
+      resetForm()
     } catch (err) {
       toast.error(
         err instanceof Error ? err.message : "Erro ao salvar produto"
@@ -101,64 +145,68 @@ export function ProductForm({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="font-heading">
+          <DialogTitle>
             {isEditing ? "Editar Produto" : "Novo Produto"}
           </DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Atualize as informacoes do produto abaixo."
+              ? "Atualize as informações do produto."
               : "Preencha os dados para cadastrar um novo produto."}
           </DialogDescription>
-
         </DialogHeader>
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Nome */}
           <div className="flex flex-col gap-2">
-            <Label htmlFor="prod-name">Nome *</Label>
+            <Label>Nome {!isEditing && "*"}</Label>
             <Input
-              id="prod-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Nome do produto"
-              required
+              required={!isEditing}
             />
           </div>
+
+          {/* Descrição */}
           <div className="flex flex-col gap-2">
-            <Label htmlFor="prod-desc">Descricao</Label>
+            <Label>Descrição</Label>
             <Textarea
-              id="prod-desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Descricao do produto"
+              placeholder="Descrição do produto"
               rows={3}
             />
           </div>
+
+          {/* Preço e Quantidade */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="prod-price">Preco *</Label>
+              <Label>Preço {!isEditing && "*"}</Label>
               <Input
-                id="prod-price"
                 type="number"
                 step="0.01"
                 min="0"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="0.00"
-                required
+                required={!isEditing}
               />
             </div>
+
             <div className="flex flex-col gap-2">
-              <Label htmlFor="prod-qty">Quantidade *</Label>
+              <Label>Quantidade {!isEditing && "*"}</Label>
               <Input
-                id="prod-qty"
                 type="number"
                 min="0"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 placeholder="0"
-                required
+                required={!isEditing}
               />
             </div>
           </div>
+
+          {/* Categoria apenas na criação */}
           {!isEditing && (
             <div className="flex flex-col gap-2">
               <Label>Categoria *</Label>
@@ -176,19 +224,23 @@ export function ProductForm({
               </Select>
             </div>
           )}
+
+          {/* Imagem */}
           <div className="flex flex-col gap-2">
-            <Label htmlFor="prod-cover">Imagem (URL)</Label>
+            <Label>Imagem (URL)</Label>
             <Input
-              id="prod-cover"
               value={cover}
               onChange={(e) => setCover(e.target.value)}
               placeholder="https://..."
             />
           </div>
+
+          {/* Botões */}
           <div className="flex justify-end gap-3 pt-2">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
+
             <Button type="submit" disabled={loading}>
               {loading ? (
                 <>

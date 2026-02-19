@@ -7,54 +7,24 @@ import { cn } from "../../lib/utils"
 
 const plans = [
   {
-    name: "Starter",
+    name: "MEI",
     code: "ST",
     monthlyPrice: "Gratis",
     yearlyPrice: "Gratis",
-    description: "Para quem esta comecando",
+    description: "Ideal para pequenos empreendedores",
     features: [
-      "Ate 50 produtos",
+      "Ate 20 produtos",
       "100 vendas/mes",
+      "Registro manual de vendas",
+      "Importação CSV / Excel",
+      "Dashboard básicos",
+      "Histórico de vendas",
+      "Sem cartão de crédito",
       "1 usuario",
-      "Dashboard basico",
-      "Suporte por email",
+      "Suporte por email"
     ],
     popular: false,
-  },
-  {
-    name: "Profissional",
-    code: "ME",
-    monthlyPrice: "R$ 49",
-    yearlyPrice: "R$ 39",
-    description: "Para negocios em crescimento",
-    features: [
-      "Produtos ilimitados",
-      "Vendas ilimitadas",
-      "5 usuarios",
-      "Analytics completo",
-      "Ranking de clientes",
-      "Relatorios avancados",
-      "Suporte prioritario",
-    ],
-    popular: true,
-  },
-  {
-    name: "Enterprise",
-    code: "EN",
-    monthlyPrice: "R$ 149",
-    yearlyPrice: "R$ 119",
-    description: "Para grandes operacoes",
-    features: [
-      "Tudo do Profissional",
-      "Usuarios ilimitados",
-      "API dedicada",
-      "SLA garantido",
-      "Gerente de conta",
-      "Integracao customizada",
-      "Suporte 24/7",
-    ],
-    popular: false,
-  },
+  }
 ]
 
 export function PricingSection() {
@@ -65,12 +35,15 @@ export function PricingSection() {
       window.location.href = "/register"
       return
     }
+
     try {
       const BASE_URL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:8082"
+
       const res = await fetch(
         `${BASE_URL}/stripe/checkout?plan=${planCode}&annual=${annual}`
       )
+
       if (res.ok) {
         const data = await res.json()
         window.location.href = data.checkoutUrl
@@ -87,9 +60,11 @@ export function PricingSection() {
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">
             Planos
           </p>
+
           <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">
             Escolha o plano ideal
           </h2>
+
           <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
             Comece gratis e escale conforme seu negocio cresce.
           </p>
@@ -106,6 +81,7 @@ export function PricingSection() {
             >
               Mensal
             </button>
+
             <button
               onClick={() => setAnnual(true)}
               className={cn(
@@ -121,12 +97,13 @@ export function PricingSection() {
           </div>
         </div>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-3">
+        {/* GRID CENTRALIZADO */}
+        <div className="mt-12 grid gap-8 justify-items-center">
           {plans.map((plan) => (
             <div
               key={plan.name}
               className={cn(
-                "relative rounded-xl border p-8 transition-all",
+                "relative w-full max-w-md rounded-xl border p-8 transition-all",
                 plan.popular
                   ? "border-primary bg-card shadow-xl shadow-primary/10"
                   : "border-border bg-card hover:border-primary/30 hover:shadow-md"
@@ -144,6 +121,7 @@ export function PricingSection() {
                 <h3 className="font-heading text-xl font-bold text-foreground">
                   {plan.name}
                 </h3>
+
                 <p className="mt-1 text-sm text-muted-foreground">
                   {plan.description}
                 </p>
@@ -153,6 +131,7 @@ export function PricingSection() {
                 <span className="font-heading text-4xl font-bold text-foreground">
                   {annual ? plan.yearlyPrice : plan.monthlyPrice}
                 </span>
+
                 {plan.monthlyPrice !== "Gratis" && (
                   <span className="text-sm text-muted-foreground">/mes</span>
                 )}

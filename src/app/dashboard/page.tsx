@@ -34,12 +34,13 @@ import { formatCurrency } from "../../lib/format"
 import type { ClientOverview, TopBuyer, BestSellingProduct } from "../../lib/types"
 
 const CHART_COLORS = [
-    "hsl(215, 80%, 50%)",
-    "hsl(160, 60%, 45%)",
-    "hsl(30, 80%, 55%)",
-    "hsl(280, 65%, 60%)",
-    "hsl(340, 75%, 55%)",
+    "hsl(120, 60%, 40%)",
+    "hsl(50, 70%, 50%)",
+    "hsl(0, 70%, 40%)",
+    "hsl(300, 20%, 73%)",
+    "hsl(10, 20%, 72%)",
 ]
+
 
 export default function DashboardPage() {
     const { data: overview, isLoading: loadingOverview } =

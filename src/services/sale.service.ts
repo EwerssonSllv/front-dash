@@ -27,4 +27,11 @@ export const salesService = {
     api.get<Sale[]>(
       `/sales/day/${year}/${month}/${day}${status ? `?status=${status}` : ""}`
     ),
+
+  /** Importa vendas em lote via arquivo CSV ou XLSX (MultipartFile) */
+  importFile: (file: File, onProgress?: (pct: number) => void) => {
+    const formData = new FormData()
+    formData.append("file", file)
+    return api.patch<{ message: string }>("/sales/import", formData, onProgress)
+  },
 }
