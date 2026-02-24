@@ -1,41 +1,35 @@
-
 import type { Metadata } from "next"
-import { Inter, Space_Grotesk } from "next/font/google"
-import { Toaster } from "sonner"
 import { SWRProvider } from "../lib/swr-config"
-
 import "./globals.css"
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-})
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
-})
-
 export const metadata: Metadata = {
-  title: "Dashlyze - Controle suas vendas. Domine seus numeros.",
+  title: "Dashlyze - Controle suas vendas. Domine seus números.",
   description:
-    "SaaS completo para gerenciar produtos, clientes e metricas financeiras. Ideal para pequenos e medios empreendedores.",
+    "SaaS completo para gerenciar produtos, clientes e métricas financeiras. Ideal para pequenos e médios empreendedores.",
+  openGraph: {
+    title: "Dashlyze",
+    description:
+      "SaaS completo para gerenciar produtos, clientes e métricas financeiras.",
+    type: "website",
+    url: "https://dashlyze.com",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Dashlyze",
+    description:
+      "SaaS completo para gerenciar produtos, clientes e métricas financeiras.",
+  },
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="pt-BR">
-      <body
-        className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}
-      >
-        <SWRProvider>
-          {children}
-          <Toaster richColors position="top-right" />
-        </SWRProvider>
+      <body>
+        <SWRProvider>{children}</SWRProvider>
       </body>
     </html>
   )

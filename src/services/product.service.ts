@@ -1,4 +1,4 @@
-import { api } from "../lib/api"
+import { http } from "../lib/http"
 import type {
   Product,
   CreateProductPayload,
@@ -7,24 +7,32 @@ import type {
 } from "../lib/types"
 
 export const productsService = {
-  getAll: () => api.get<Product[]>("/products"),
+  getAll: () => http.get<Product[]>("/products"),
 
-  getById: (id: number) => api.get<Product>(`/products/${id}`),
+  getById: (id: number) =>
+    http.get<Product>(`/products/${id}`),
 
   create: (payload: CreateProductPayload) =>
-    api.post<Product>("/products", payload),
+    http.post<Product>("/products", payload),
 
-  update: (id: number, payload: UpdateProductPayload, method: "PATCH" | "PUT" = "PATCH") =>
+  update: (
+    id: number,
+    payload: UpdateProductPayload,
+    method: "PATCH" | "PUT" = "PATCH"
+  ) =>
     method === "PATCH"
-      ? api.patch<Product>(`/products/${id}`, payload)
-      : api.put<Product>(`/products/${id}`, payload),
+      ? http.patch<Product>(`/products/${id}`, payload)
+      : http.put<Product>(`/products/${id}`, payload),
 
-  delete: (id: number) => api.delete<void>(`/products/${id}`),
+  delete: (id: number) =>
+    http.delete<void>(`/products/${id}`),
 
-  restore: (id: number) => api.patch<void>(`/products/${id}/restore`),
+  restore: (id: number) =>
+    http.patch<void>(`/products/${id}/restore`),
 
-  getTrash: () => api.get<Product[]>("/products/trash"),
+  getTrash: () =>
+    http.get<Product[]>("/products/trash"),
 
-  getBestSelling: () => api.get<BestSellingProduct[]>("/products/best-selling-products"),
-};
-
+  getBestSelling: () =>
+    http.get<BestSellingProduct[]>("/products/best-selling-products"),
+}

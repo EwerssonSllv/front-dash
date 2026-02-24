@@ -1,55 +1,54 @@
-// services/authService.ts
-import type { LoginPayload, RegisterPayload, AuthResponse } from "../lib/types";
-
-const PROXY_URL = "/api/proxy";
+const PROXY_URL = "/api/proxy"
 
 export const authService = {
-  async login(payload: LoginPayload): Promise<void> {
+  login: async (payload: { email: string; password: string }) => {
     const res = await fetch(`${PROXY_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-      credentials: "include", // envia cookie HTTP-only
-    });
+      credentials: "include",
+    })
 
     if (!res.ok) {
-      const msg = await res.text();
-      throw new Error(msg || "Erro no login");
+      throw new Error("Erro no login")
     }
+
+    return res.json() // importante retornar
   },
 
-  async register(payload: RegisterPayload): Promise<AuthResponse> {
+  register: async (payload: any) => {
     const res = await fetch(`${PROXY_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       credentials: "include",
-    });
+    })
 
     if (!res.ok) {
-      const msg = await res.text().catch(() => "Erro ao registrar");
-      throw new Error(msg || "Erro ao criar conta");
+      throw new Error("Erro no registro")
     }
 
-    return res.json();
+    return res.json()
   },
 
-  async refresh(): Promise<boolean> {
-    try {
-      const res = await fetch(`${PROXY_URL}/auth/refresh`, {
-        method: "POST",
-        credentials: "include",
-      });
-      return res.ok;
-    } catch {
-      return false;
-    }
-  },
-
-  async logout(): Promise<void> {
-    await fetch(`${PROXY_URL}/auth/logout`, {
+  logout: async () => {
+    const res = await fetch(`${PROXY_URL}/auth/logout`, {
       method: "POST",
       credentials: "include",
-    });
+    })
+
+    if (!res.ok) {
+      throw new Error("Erro no logout")
+    }
   },
-};
+
+  me: async () => {
+    const res = await fetch(`${PROXY_URL}/auth/me`, {
+      credentials: "include",
+    })
+
+    if (!res.ok) return null
+
+    return res.json()
+  },
+}

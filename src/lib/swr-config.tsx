@@ -1,15 +1,15 @@
 "use client"
 
 import { SWRConfig } from "swr"
-import type { ReactNode } from "react"
+import { fetcher } from "../lib/fetcher"
 
-export function SWRProvider({ children }: { children: ReactNode }) {
+export function SWRProvider({ children }: { children: React.ReactNode }) {
   return (
     <SWRConfig
       value={{
+        fetcher,
         revalidateOnFocus: false,
         shouldRetryOnError: false,
-        dedupingInterval: 5000,
       }}
     >
       {children}

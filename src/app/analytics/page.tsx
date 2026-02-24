@@ -71,7 +71,7 @@ export default function AnalyticsPage() {
 
   const { data: bestProducts, isLoading: lbp } = useSWR<BestSellingProduct[]>(
     "analytics-best-products",
-    () => productsService.getBestSelling()
+    () => productsService.getBestSelling().then(res => res.data)
   )
 
   const buyersChart =

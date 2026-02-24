@@ -16,7 +16,7 @@ export default function LoginPage() {
   const redirect = searchParams.get("redirect") || "/dashboard"
 
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState("") 
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -31,16 +31,15 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
+      // login envia cookie HTTP-only (access + refresh)
       await authService.login({ email, password })
 
       toast.success("Login realizado com sucesso!")
 
-      // 🔥 IMPORTANTE: apenas replace, sem refresh
+      // redireciona para a página original
       router.replace(redirect)
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Erro ao fazer login"
-      )
+      toast.error(err instanceof Error ? err.message : "Erro ao fazer login")
     } finally {
       setLoading(false)
     }
@@ -48,6 +47,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen">
+      {/* Painel lateral com branding */}
       <div className="hidden w-1/2 items-center justify-center bg-primary lg:flex">
         <div className="max-w-md px-8 text-center">
           <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-foreground/10">
@@ -57,12 +57,13 @@ export default function LoginPage() {
             Bem-vindo de volta
           </h2>
           <p className="mt-4 leading-relaxed text-primary-foreground/70">
-            Acesse seu dashboard e continue gerenciando seu negocio com
-            inteligencia e praticidade.
+            Acesse seu dashboard e continue gerenciando seu negócio com
+            inteligência e praticidade.
           </p>
         </div>
       </div>
 
+      {/* Formulário de login */}
       <div className="flex w-full items-center justify-center px-6 lg:w-1/2">
         <div className="w-full max-w-md">
           <Link href="/" className="mb-8 flex items-center gap-2 lg:hidden">
@@ -90,7 +91,6 @@ export default function LoginPage() {
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
                 required
               />
             </div>
@@ -104,7 +104,6 @@ export default function LoginPage() {
                   placeholder="Sua senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
                   required
                   className="pr-10"
                 />
@@ -114,11 +113,7 @@ export default function LoginPage() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>

@@ -25,7 +25,7 @@ import { productsService } from "../../services/product.service"
 import type { Product } from "../../lib/types"
 
 const categories = [
-  "Eletronicos",
+  "ELETRONICOS",
   "Roupas",
   "Alimentos",
   "Servicos",
