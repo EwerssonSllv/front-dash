@@ -284,6 +284,79 @@ export default function AnalyticsPage() {
               </div>
             )}
           </TabsContent>
+          <TabsContent value="cancellers" className="mt-6">
+            {ltc ? (
+              <TableSkeleton rows={5} />
+            ) : (
+              <div className="rounded-xl border border-border bg-card p-6">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border text-left">
+                      <th className="py-3 text-muted-foreground">Cliente</th>
+                      <th className="py-3 text-muted-foreground">
+                        Cancelamentos
+                      </th>
+                      <th className="py-3 text-muted-foreground">
+                        Valor Cancelado
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cancellers?.map((c) => (
+                      <tr
+                        key={c.clientId}
+                        className="border-b border-border last:border-0"
+                      >
+                        <td className="py-3 font-medium text-foreground">
+                          {c.name}
+                        </td>
+                        <td className="py-3 text-muted-foreground">
+                          {c.canceledSales}
+                        </td>
+                        <td className="py-3 font-medium text-red-600">
+                          {formatCurrency(c.canceledValue)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </TabsContent>
+          <TabsContent value="fast-payers" className="mt-6">
+            {lfp ? (
+              <TableSkeleton rows={5} />
+            ) : (
+              <div className="rounded-xl border border-border bg-card p-6">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border text-left">
+                      <th className="py-3 text-muted-foreground">Cliente</th>
+                      <th className="py-3 text-muted-foreground">
+                        Tempo Médio de Pagamento
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {fastPayers?.map((f) => (
+                      <tr
+                        key={f.clientId}
+                        className="border-b border-border last:border-0"
+                      >
+                        <td className="py-3 font-medium text-foreground">
+                          {f.name}
+                        </td>
+
+                        <td className="py-3 text-muted-foreground">
+                          {f.averagePaymentTimeFormatted}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </TabsContent>
         </Tabs>
       </div>
     </DashboardShell>

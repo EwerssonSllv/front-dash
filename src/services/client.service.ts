@@ -29,4 +29,8 @@ export const clientsService = {
 
   getFastestPayers: (): Promise<FastestPayer[]> =>
     http.get("/clients/fastest-payers"),
+
+  getCancellers: (): Promise<TopCanceller[]> =>
+    http.get("/clients/top-cancellers"),
+
 }

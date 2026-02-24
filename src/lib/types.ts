@@ -66,8 +66,9 @@ export interface TopCanceller {
 export interface FastestPayer {
   clientId: number
   name: string
-  averagePaymentTime: string
-  sales: Sale[]
+  averagePaymentTimeSeconds: number
+  averagePaymentTimeFormatted: string
+  totalValue?: number
 }
 
 export interface BestSellingProduct {
