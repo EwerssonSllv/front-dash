@@ -1,38 +1,38 @@
 import { http } from "../lib/http"
-import type {
-  Product,
-  CreateProductPayload,
-  UpdateProductPayload,
-  BestSellingProduct,
-} from "../lib/types"
+import type { Product, CreateProductPayload, UpdateProductPayload, BestSellingProduct } from "../lib/types"
 
 export const productsService = {
-  getAll: () => http.get<Product[]>("/products"),
+  getAll: async (): Promise<Product[]> => {
+    return http.get("/products") // já retorna data direto pelo interceptor
+  },
 
-  getById: (id: number) =>
-    http.get<Product>(`/products/${id}`),
+  getTrash: async (): Promise<Product[]> => {
+    return http.get("/products/trash")
+  },
 
-  create: (payload: CreateProductPayload) =>
-    http.post<Product>("/products", payload),
+  getById: async (id: number): Promise<Product> => {
+    return http.get(`/products/${id}`)
+  },
 
-  update: (
-    id: number,
-    payload: UpdateProductPayload,
-    method: "PATCH" | "PUT" = "PATCH"
-  ) =>
-    method === "PATCH"
-      ? http.patch<Product>(`/products/${id}`, payload)
-      : http.put<Product>(`/products/${id}`, payload),
+  create: async (payload: CreateProductPayload): Promise<Product> => {
+    return http.post("/products", payload)
+  },
 
-  delete: (id: number) =>
-    http.delete<void>(`/products/${id}`),
+  update: async (id: number, payload: UpdateProductPayload, method: "PATCH" | "PUT" = "PATCH"): Promise<Product> => {
+    return method === "PATCH"
+      ? http.patch(`/products/${id}`, payload)
+      : http.put(`/products/${id}`, payload)
+  },
 
-  restore: (id: number) =>
-    http.patch<void>(`/products/${id}/restore`),
+  delete: async (id: number): Promise<void> => {
+    return http.delete(`/products/${id}`)
+  },
 
-  getTrash: () =>
-    http.get<Product[]>("/products/trash"),
+  restore: async (id: number): Promise<void> => {
+    return http.patch(`/products/${id}/restore`)
+  },
 
-  getBestSelling: () =>
-    http.get<BestSellingProduct[]>("/products/best-selling-products"),
+  getBestSelling: async (): Promise<BestSellingProduct[]> => {
+    return http.get("/products/best-selling-products")
+  },
 }

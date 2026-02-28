@@ -74,7 +74,7 @@ export default function DashboardPage() {
   return (
     <DashboardShell title="Dashboard" description="Visão geral do seu negócio">
       {/* Overview Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-6">
         {loadingOverview ? (
           Array.from({ length: 6 }).map((_, i) => <StatCardSkeleton key={i} />)
         ) : (
@@ -116,51 +116,13 @@ export default function DashboardPage() {
       {/* Charts Row */}
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Bar Chart - Top Buyers */}
-        {loadingBuyers ? (
-          <ChartSkeleton />
-        ) : (
-          <div className="rounded-xl border border-border bg-card p-6">
-            <h3 className="font-heading text-lg font-semibold text-foreground">
-              Top Compradores
-            </h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Ranking por valor total de compras
-            </p>
-            <div className="mt-6 h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={barData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                  <XAxis
-                    dataKey="name"
-                    className="text-xs"
-                    tick={{ fill: "hsl(220, 10%, 46%)", fontSize: 12 }}
-                  />
-                  <YAxis
-                    className="text-xs"
-                    tick={{ fill: "hsl(220, 10%, 46%)", fontSize: 12 }}
-                    tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip
-                    formatter={(value) => [formatCurrency(Number(value) || 0), "Valor"]}
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                      fontSize: "13px",
-                    }}
-                  />
-                  <Bar dataKey="valor" fill="hsl(215, 80%, 50%)" radius={[6, 6, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        )}
+      
 
         {/* Pie Chart - Sales Distribution */}
         {loadingOverview ? (
           <ChartSkeleton />
         ) : (
-          <div className="rounded-xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-6 ">
             <h3 className="font-heading text-lg font-semibold text-foreground">
               Distribuição de Vendas
             </h3>
@@ -220,7 +182,7 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {bestProducts?.data?.slice(0, 8).map((product) => (
+                  {bestProducts?.slice(0, 8).map((product) => (
                     <tr key={product.productId} className="border-b border-border last:border-0">
                       <td className="py-3 font-medium text-foreground">{product.name}</td>
                       <td className="py-3 text-muted-foreground">{product.totalQuantity}</td>
@@ -230,7 +192,7 @@ export default function DashboardPage() {
                       <td className="py-3 text-muted-foreground">{product.buyers.length}</td>
                     </tr>
                   ))}
-                  {(!bestProducts?.data || bestProducts.data.length === 0) && (
+                  {(!bestProducts || bestProducts.length === 0) && (
                     <tr>
                       <td colSpan={4} className="py-8 text-center text-muted-foreground">
                         Nenhum produto vendido ainda

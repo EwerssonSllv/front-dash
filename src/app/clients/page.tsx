@@ -14,6 +14,7 @@ import {
 } from "../../components/ui/dialog"
 import { TableSkeleton } from "../../components/ui/loading-skeleton"
 import { clientsService } from "../../services/client.service"
+import { salesService } from "../../services/sale.service"
 import { formatCurrency, getStatusColor, getStatusLabel } from "../../lib/format"
 import type { ClientInfo, Sale } from "../../lib/types"
 
@@ -37,12 +38,12 @@ export default function ClientsPage() {
   const viewClient = async (client: ClientInfo) => {
     setSelectedClient(client)
     setLoadingSales(true)
+
     try {
-      // Try to get client-specific data from top-buyers which includes sales
-      const topBuyers = await clientsService.getTopBuyers()
-      const found = topBuyers.find((b) => b.clientId === client.id)
-      setClientSales(found?.sales ?? [])
-    } catch {
+      const sales = await salesService.getByClient(client.id)
+      setClientSales(sales)
+    } catch (error) {
+      console.error("Erro ao buscar vendas do cliente:", error)
       setClientSales([])
     } finally {
       setLoadingSales(false)
@@ -54,6 +55,7 @@ export default function ClientsPage() {
       title="Clientes"
       description="Gerencie sua base de clientes"
     >
+      {/* Busca */}
       <div className="mb-6">
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -66,6 +68,7 @@ export default function ClientsPage() {
         </div>
       </div>
 
+      {/* Tabela */}
       {isLoading ? (
         <TableSkeleton rows={8} />
       ) : (
@@ -116,6 +119,7 @@ export default function ClientsPage() {
                     </td>
                   </tr>
                 ))}
+
                 {(!filtered || filtered.length === 0) && (
                   <tr>
                     <td
@@ -134,7 +138,7 @@ export default function ClientsPage() {
         </div>
       )}
 
-      {/* Client Detail Dialog */}
+      {/* Dialog de detalhes */}
       <Dialog
         open={!!selectedClient}
         onOpenChange={() => setSelectedClient(null)}
@@ -145,8 +149,10 @@ export default function ClientsPage() {
               {selectedClient?.name}
             </DialogTitle>
           </DialogHeader>
+
           {selectedClient && (
             <div className="flex flex-col gap-4">
+              {/* Dados do cliente */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Mail className="h-4 w-4" />
@@ -154,18 +160,20 @@ export default function ClientsPage() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Phone className="h-4 w-4" />
-                  {selectedClient.phone || "Nao informado"}
+                  {selectedClient.phone || "Não informado"}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <FileText className="h-4 w-4" />
-                  {selectedClient.document || "Nao informado"}
+                  {selectedClient.document || "Não informado"}
                 </div>
               </div>
 
+              {/* Histórico */}
               <div className="mt-2">
                 <p className="mb-3 text-sm font-semibold text-foreground">
-                  Historico de Compras
+                  Histórico de Compras
                 </p>
+
                 {loadingSales ? (
                   <div className="flex flex-col gap-2">
                     {Array.from({ length: 3 }).map((_, i) => (
@@ -177,27 +185,73 @@ export default function ClientsPage() {
                   </div>
                 ) : clientSales.length > 0 ? (
                   <div className="flex flex-col gap-2">
-                    {clientSales.map((sale) => (
-                      <div
-                        key={sale.id}
-                        className="flex items-center justify-between rounded-lg border border-border p-3"
-                      >
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
-                            {formatCurrency(sale.totalPrice)}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {sale.date}
-                          </p>
-                        </div>
-                        <Badge
-                          variant="secondary"
-                          className={getStatusColor(sale.status)}
-                        >
-                          {getStatusLabel(sale.status)}
-                        </Badge>
-                      </div>
-                    ))}
+                    {clientSales
+                      .sort(
+                        (a, b) =>
+                          new Date(b.date).getTime() -
+                          new Date(a.date).getTime()
+                      )
+                      .map((sale) => {
+                        const totalItems =
+                          sale.items?.reduce(
+                            (acc, item) => acc + item.quantity,
+                            0
+                          ) || 0
+
+                        return (
+                          <div
+                            key={sale.id}
+                            className="group relative flex items-center justify-between rounded-lg border border-border p-3 transition hover:bg-muted/40"
+                          >
+                            <div>
+                              <p className="text-sm font-medium text-foreground">
+                                {formatCurrency(sale.totalPrice)}
+                              </p>
+
+                              <p className="text-xs text-muted-foreground">
+                                {sale.date}
+                              </p>
+
+                              <p className="mt-1 cursor-pointer text-xs font-medium text-primary">
+                                {totalItems}{" "}
+                                {totalItems === 1 ? "item" : "itens"}
+                              </p>
+                            </div>
+
+                            <Badge
+                              variant="secondary"
+                              className={getStatusColor(sale.status)}
+                            >
+                              {getStatusLabel(sale.status)}
+                            </Badge>
+
+                            {/* Tooltip */}
+                            {sale.items && sale.items.length > 0 && (
+                              <div className="pointer-events-none absolute right-0 top-full z-20 mt-2 hidden w-64 rounded-lg border border-border bg-popover p-3 text-xs shadow-lg group-hover:block">
+                                <p className="mb-2 font-semibold text-foreground">
+                                  Itens comprados:
+                                </p>
+
+                                <div className="flex flex-col gap-1">
+                                  {sale.items.map((item, index) => (
+                                    <div
+                                      key={`${sale.id}-${item.productName}-${index}`}
+                                      className="flex justify-between text-muted-foreground"
+                                    >
+                                      <span>
+                                        {item.productName} x{item.quantity}
+                                      </span>
+                                      <span>
+                                        {formatCurrency(item.totalPrice)}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">

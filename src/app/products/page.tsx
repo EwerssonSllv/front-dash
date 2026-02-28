@@ -33,19 +33,19 @@ export default function ProductsPage() {
     data: products,
     isLoading,
     mutate,
-  } = useSWR<Product[]>("products", () => productsService.getAll())
+  } = useSWR<Product[]>("products", productsService.getAll)
 
   const {
     data: trashProducts,
     isLoading: loadingTrash,
     mutate: mutateTrash,
-  } = useSWR<Product[]>("products-trash", () => productsService.getTrash())
+  } = useSWR<Product[]>("products-trash", productsService.getTrash)
 
-  const filtered = products?.filter(
-    (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.category.toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredProducts = products?.filter((p) => {
+  const nameMatch = p.name && p.name.toLowerCase().includes(search.toLowerCase());
+  const categoryMatch = p.category && p.category.toLowerCase().includes(search.toLowerCase());
+  return nameMatch || categoryMatch;
+});
 
   const handleDelete = async (id: number) => {
     try {
@@ -143,7 +143,7 @@ export default function ProductsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered?.map((product) => (
+                    {filteredProducts?.map((product) => (
                       <tr
                         key={product.id}
                         className="border-b border-border last:border-0"
@@ -214,7 +214,7 @@ export default function ProductsPage() {
                         </td>
                       </tr>
                     ))}
-                    {(!filtered || filtered.length === 0) && (
+                    {(!filteredProducts || filteredProducts.length === 0) && (
                       <tr>
                         <td
                           colSpan={6}

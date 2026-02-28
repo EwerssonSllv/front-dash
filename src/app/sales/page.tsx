@@ -22,7 +22,7 @@ import { TableSkeleton } from "../../components/ui/loading-skeleton"
 import { SaleForm } from "../../components/forms/sale-form"
 import { salesService } from "../../services/sale.service"
 import { formatCurrency, getStatusColor, getStatusLabel } from "../../lib/format"
-import type { Sale } from "../../lib/types"
+import type { Sale, SaleItem } from "../../lib/types"
 
 function SaleTable({
   sales,
@@ -37,155 +37,212 @@ function SaleTable({
   onReturn?: (id: number) => void
   onCancel?: (id: number) => void
 }) {
+  const [tooltip, setTooltip] = useState<{
+    x: number
+    y: number
+    items: SaleItem[]
+  } | null>(null)
+
   if (loading) return <TableSkeleton rows={5} />
 
+  const handleMouseEnter = (
+    e: React.MouseEvent<HTMLTableCellElement>,
+    items: SaleItem[]
+  ) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+
+    const tooltipWidth = 260
+    const tooltipHeight = 200
+
+    let x = rect.left
+    let y = rect.bottom + 8
+
+    if (x + tooltipWidth > window.innerWidth) {
+      x = window.innerWidth - tooltipWidth - 16
+    }
+
+    if (y + tooltipHeight > window.innerHeight) {
+      y = rect.top - tooltipHeight - 8
+    }
+
+    setTooltip({ x, y, items })
+  }
+
   return (
-    <div className="rounded-xl border border-border bg-card">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border text-left">
-              <th className="px-6 py-4 font-medium text-muted-foreground">
-                Cliente
-              </th>
-              <th className="px-6 py-4 font-medium text-muted-foreground">
-                Itens
-              </th>
-              <th className="px-6 py-4 font-medium text-muted-foreground">
-                Total
-              </th>
-              <th className="px-6 py-4 font-medium text-muted-foreground">
-                Status
-              </th>
-              <th className="px-6 py-4 font-medium text-muted-foreground">
-                Data
-              </th>
-              <th className="px-6 py-4 font-medium text-muted-foreground">
-                Acoes
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {sales?.map((sale) => (
-              <tr
-                key={sale.id}
-                className="border-b border-border last:border-0"
-              >
-
-                <td className="px-6 py-4">
-                  {sale.client ? (
-                    <>
-                      <p className="font-medium text-foreground">
-                        {sale.client.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {sale.client.email}
-                      </p>
-                    </>
-                  ) : (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <UserX className="h-4 w-4" />
-                      <span>Não informado</span>
-                    </div>
-                  )}
-                </td>
-
-                <td className="px-6 py-4 text-muted-foreground">
-                  {sale.items.length}{" "}
-                  {sale.items.length === 1 ? "item" : "itens"}
-                </td>
-                <td className="px-6 py-4 font-medium text-foreground">
-                  {formatCurrency(sale.totalPrice)}
-                </td>
-                <td className="px-6 py-4">
-                  <Badge
-                    variant="secondary"
-                    className={getStatusColor(sale.status)}
-                  >
-                    {getStatusLabel(sale.status)}
-                  </Badge>
-                </td>
-                <td className="px-6 py-4 text-xs text-muted-foreground">
-                  {sale.date}
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-1">
-                    {sale.status === "PENDING" && onPay && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onPay(sale.id)}
-                        title="Marcar como pago"
-                        className="text-emerald-600 hover:text-emerald-700"
-                      >
-                        <CreditCard className="h-4 w-4" />
-                      </Button>
-                    )}
-                    {sale.status === "PAID" && onReturn && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onReturn(sale.id)}
-                        title="Devolver"
-                      >
-                        <Undo2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                    {sale.status === "PENDING" && onCancel && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onCancel(sale.id)}
-                        title="Cancelar"
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                </td>
+    <>
+      <div className="rounded-xl border border-border bg-card">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-left">
+                <th className="px-6 py-4 font-medium text-muted-foreground">
+                  Cliente
+                </th>
+                <th className="px-6 py-4 font-medium text-muted-foreground">
+                  Itens
+                </th>
+                <th className="px-6 py-4 font-medium text-muted-foreground">
+                  Total
+                </th>
+                <th className="px-6 py-4 font-medium text-muted-foreground">
+                  Status
+                </th>
+                <th className="px-6 py-4 font-medium text-muted-foreground">
+                  Data
+                </th>
+                <th className="px-6 py-4 font-medium text-muted-foreground">
+                  Ações
+                </th>
               </tr>
-            ))}
-            {(!sales || sales.length === 0) && (
-              <tr>
-                <td
-                  colSpan={7}
-                  className="px-6 py-12 text-center text-muted-foreground"
+            </thead>
+
+            <tbody>
+              {sales?.map((sale) => (
+                <tr
+                  key={sale.id}
+                  className="border-b border-border last:border-0"
                 >
-                  Nenhuma venda encontrada
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                  <td className="px-6 py-4">
+                    {sale.client ? (
+                      <>
+                        <p className="font-medium text-foreground">
+                          {sale.client.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {sale.client.email}
+                        </p>
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <UserX className="h-4 w-4" />
+                        <span>Não informado</span>
+                      </div>
+                    )}
+                  </td>
+
+                  <td
+                    className="px-6 py-4 text-muted-foreground cursor-pointer hover:text-foreground transition"
+                    onMouseEnter={(e) =>
+                      handleMouseEnter(e, sale.items)
+                    }
+                    onMouseLeave={() => setTooltip(null)}
+                  >
+                    {sale.items.length}{" "}
+                    {sale.items.length === 1 ? "item" : "itens"}
+                  </td>
+
+                  <td className="px-6 py-4 font-medium text-foreground">
+                    {formatCurrency(sale.totalPrice)}
+                  </td>
+
+                  <td className="px-6 py-4">
+                    <Badge
+                      variant="secondary"
+                      className={getStatusColor(sale.status)}
+                    >
+                      {getStatusLabel(sale.status)}
+                    </Badge>
+                  </td>
+
+                  <td className="px-6 py-4 text-xs text-muted-foreground">
+                    {sale.date}
+                  </td>
+
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-1">
+                      {sale.status === "PENDING" && onPay && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onPay(sale.id)}
+                          title="Marcar como pago"
+                          className="text-emerald-600 hover:text-emerald-700"
+                        >
+                          <CreditCard className="h-4 w-4" />
+                        </Button>
+                      )}
+
+                      {sale.status === "PAID" && onReturn && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onReturn(sale.id)}
+                          title="Devolver"
+                        >
+                          <Undo2 className="h-4 w-4" />
+                        </Button>
+                      )}
+
+                      {sale.status === "PENDING" && onCancel && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onCancel(sale.id)}
+                          title="Cancelar"
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+              {(!sales || sales.length === 0) && (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="px-6 py-12 text-center text-muted-foreground"
+                  >
+                    Nenhuma venda encontrada
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+
+      {tooltip && (
+        <div
+          className="fixed z-9999 w-65 rounded-xl border border-border bg-card p-4 shadow-2xl"
+          style={{
+            top: tooltip.y,
+            left: tooltip.x,
+          }}
+        >
+          <p className="mb-2 text-xs font-semibold text-muted-foreground">
+            Produtos
+          </p>
+
+          <ul className="space-y-1 text-xs max-h-40 overflow-y-auto pr-1">
+            {tooltip.items.map((item, index) => (
+              <li key={`${item.productId}-${index}`}>
+                • {item.productName} ({item.quantity}x)
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </>
   )
 }
 
 export default function SalesPage() {
   const [formOpen, setFormOpen] = useState(false)
 
-  const {
-    data: pending,
-    isLoading: lp,
-    mutate: mp,
-  } = useSWR<Sale[]>("sales-pending", () => salesService.getPending())
-  const {
-    data: paid,
-    isLoading: lpaid,
-    mutate: mpaid,
-  } = useSWR<Sale[]>("sales-paid", () => salesService.getPaid())
-  const {
-    data: cancelled,
-    isLoading: lc,
-    mutate: mc,
-  } = useSWR<Sale[]>("sales-cancelled", () => salesService.getCancelled())
-  const {
-    data: returned,
-    isLoading: lr,
-    mutate: mr,
-  } = useSWR<Sale[]>("sales-returned", () => salesService.getReturned())
+  const { data: pending, isLoading: lp, mutate: mp } =
+    useSWR<Sale[]>("sales-pending", () => salesService.getPending())
+
+  const { data: paid, isLoading: lpaid, mutate: mpaid } =
+    useSWR<Sale[]>("sales-paid", () => salesService.getPaid())
+
+  const { data: cancelled, isLoading: lc, mutate: mc } =
+    useSWR<Sale[]>("sales-cancelled", () => salesService.getCancelled())
+
+  const { data: returned, isLoading: lr, mutate: mr } =
+    useSWR<Sale[]>("sales-returned", () => salesService.getReturned())
 
   const mutateAll = () => {
     mp()
@@ -207,10 +264,10 @@ export default function SalesPage() {
   const handleReturn = async (id: number) => {
     try {
       await salesService.return(id)
-      toast.success("Devolucao registrada!")
+      toast.success("Devolução registrada!")
       mutateAll()
     } catch {
-      toast.error("Erro ao registrar devolucao")
+      toast.error("Erro ao registrar devolução")
     }
   }
 
@@ -227,7 +284,7 @@ export default function SalesPage() {
   return (
     <DashboardShell
       title="Vendas"
-      description="Gerencie suas vendas e transacoes"
+      description="Gerencie suas vendas e transações"
       actions={
         <Button onClick={() => setFormOpen(true)} className="gap-2">
           <Plus className="h-4 w-4" />
@@ -246,14 +303,17 @@ export default function SalesPage() {
               </span>
             )}
           </TabsTrigger>
+
           <TabsTrigger value="paid" className="gap-2">
             <CheckCircle className="h-4 w-4" />
             Pagas
           </TabsTrigger>
+
           <TabsTrigger value="cancelled" className="gap-2">
             <XCircle className="h-4 w-4" />
             Canceladas
           </TabsTrigger>
+
           <TabsTrigger value="returned" className="gap-2">
             <RotateCcw className="h-4 w-4" />
             Devolvidas
@@ -268,6 +328,7 @@ export default function SalesPage() {
             onCancel={handleCancel}
           />
         </TabsContent>
+
         <TabsContent value="paid" className="mt-6">
           <SaleTable
             sales={paid}
@@ -275,9 +336,11 @@ export default function SalesPage() {
             onReturn={handleReturn}
           />
         </TabsContent>
+
         <TabsContent value="cancelled" className="mt-6">
           <SaleTable sales={cancelled} loading={lc} />
         </TabsContent>
+
         <TabsContent value="returned" className="mt-6">
           <SaleTable sales={returned} loading={lr} />
         </TabsContent>

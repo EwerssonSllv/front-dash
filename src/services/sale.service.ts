@@ -33,6 +33,9 @@ export const salesService = {
     http.get(
       `/sales/year/${year}${status ? `?status=${status}` : ""}`
     ),
+    
+  getByClient: (clientId: number): Promise<Sale[]> =>
+    http.get(`/sales/client/${clientId}`),
 
   getByMonth: (
     year: number,
@@ -57,6 +60,6 @@ export const salesService = {
     const formData = new FormData()
     formData.append("file", file)
 
-    return http.patch("/sales/import", formData)
+    return http.post("/sales/import", formData)
   },
 }

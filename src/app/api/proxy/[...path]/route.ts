@@ -1,42 +1,43 @@
-import { NextRequest } from "next/server"
+import { NextRequest } from "next/server";
 
-const BACKEND_URL = "http://localhost:8082"
+const BACKEND_URL = "http://localhost:8082";
 
-async function handler(
+export async function handler(
   req: NextRequest,
   context: { params: Promise<{ path: string[] }> }
 ) {
-  const { path } = await context.params
+  const { path } = await context.params;
 
   if (!path || path.length === 0) {
-    return new Response("Invalid proxy path", { status: 400 })
+    return new Response("Invalid proxy path", { status: 400 });
   }
 
-  const backendUrl =
-    `${BACKEND_URL}/${path.join("/")}${req.nextUrl.search}`
+  const backendUrl = `${BACKEND_URL}/${path.join("/")}${req.nextUrl.search}`;
 
-  const response = await fetch(backendUrl, {
-    method: req.method,
-    headers: req.headers,
-    body:
-      req.method === "GET" || req.method === "HEAD"
-        ? undefined
-        : await req.text(),
-    credentials: "include",
-  })
+  try {
+    // Encaminha a requisição mantendo headers, cookies e corpo
+    const init: any = {
+      method: req.method,
+      headers: req.headers,
+      body: req.body,          // funciona para FormData / uploads
+      // duplex é suportado em runtime, mas TS reclama, então usamos any
+      duplex: "half",
+    };
 
-  const headers = new Headers(response.headers)
+    const response = await fetch(backendUrl, init);
 
-  return new Response(response.body, {
-    status: response.status,
-    headers,
-  })
+    // Replicamos headers e status
+    const headers = new Headers(response.headers);
+
+    return new Response(response.body, {
+      status: response.status,
+      headers,
+    });
+  } catch (err) {
+    console.error("Proxy fetch error:", err);
+    return new Response("Backend unreachable", { status: 502 });
+  }
 }
 
-export {
-  handler as GET,
-  handler as POST,
-  handler as PUT,
-  handler as PATCH,
-  handler as DELETE,
-}
+// Mapeia todos os métodos HTTP
+export { handler as GET, handler as POST, handler as PUT, handler as PATCH, handler as DELETE };

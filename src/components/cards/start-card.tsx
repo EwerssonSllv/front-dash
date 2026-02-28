@@ -1,40 +1,26 @@
-import type { LucideIcon } from "lucide-react"
-import { cn } from "../../lib/utils"
+import { LucideIcon } from "lucide-react"
 
 interface StatCardProps {
   title: string
   value: string | number
   icon: LucideIcon
-  description?: string
-  className?: string
 }
 
-export function StatCard({
-  title,
-  value,
-  icon: Icon,
-  description,
-  className,
-}: StatCardProps) {
+export function StatCard({ title, value, icon: Icon }: StatCardProps) {
   return (
-    <div
-      className={cn(
-        "rounded-xl border border-border bg-card p-6 transition-all hover:shadow-md",
-        className
-      )}
-    >
+    <div className="group cursor-pointer rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/40">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
-          <Icon className="h-4 w-4 text-primary" />
+        <div>
+          <p className="text-sm text-muted-foreground">{title}</p>
+          <p className="mt-2 text-2xl font-bold text-foreground">
+            {value}
+          </p>
+        </div>
+
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary/20">
+          <Icon className="h-6 w-6" />
         </div>
       </div>
-      <p className="mt-3 font-heading text-2xl font-bold text-foreground">
-        {value}
-      </p>
-      {description && (
-        <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-      )}
     </div>
   )
 }

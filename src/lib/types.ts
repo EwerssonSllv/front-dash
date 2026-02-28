@@ -3,6 +3,8 @@
 // =========================================================
 
 export interface SaleItem {
+  id: Key | null | undefined
+  price(price: any): import("react").ReactNode
   productId: number
   productName: string
   quantity: number
