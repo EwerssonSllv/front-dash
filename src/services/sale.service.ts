@@ -33,7 +33,7 @@ export const salesService = {
     http.get(
       `/sales/year/${year}${status ? `?status=${status}` : ""}`
     ),
-    
+
   getByClient: (clientId: number): Promise<Sale[]> =>
     http.get(`/sales/client/${clientId}`),
 
@@ -56,10 +56,19 @@ export const salesService = {
       `/sales/day/${year}/${month}/${day}${status ? `?status=${status}` : ""}`
     ),
 
-  importFile: (file: File): Promise<{ message: string }> => {
+  importFile: (file: File, onProgress?: (pct: number) => void): Promise<{ message: string }> => {
     const formData = new FormData()
     formData.append("file", file)
 
-    return http.post("/sales/import", formData)
+    return http.post("/sales/import", formData, {
+      onUploadProgress: (progressEvent) => {
+        if (onProgress) {
+          const pct = progressEvent.total
+            ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            : 0
+          onProgress(pct)
+        }
+      }
+    })
   },
 }
