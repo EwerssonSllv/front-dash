@@ -13,7 +13,7 @@ export const authService = {
       throw new Error("Erro no login")
     }
 
-    return res.json() // importante retornar
+    return res.json() 
   },
 
   register: async (payload: any) => {
