@@ -2,6 +2,8 @@
 // Dashlyze - Type Definitions
 // =========================================================
 
+import { Key } from "react"
+
 export interface SaleItem {
   id: Key | null | undefined
   price(price: any): import("react").ReactNode
