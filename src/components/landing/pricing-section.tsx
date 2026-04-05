@@ -23,7 +23,7 @@ const plans = [
       "1 usuario",
       "Suporte por email"
     ],
-    popular: false,
+    popular: true,
   }
 ]
 
@@ -66,7 +66,7 @@ export function PricingSection() {
           </h2>
 
           <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-            Comece gratis e escale conforme seu negocio cresce.
+            Comece gratís e escale conforme seu negócio cresce.
           </p>
 
           <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-border bg-muted p-1">
@@ -132,7 +132,7 @@ export function PricingSection() {
                   {annual ? plan.yearlyPrice : plan.monthlyPrice}
                 </span>
 
-                {plan.monthlyPrice !== "Gratis" && (
+                {plan.monthlyPrice !== "Grátis" && (
                   <span className="text-sm text-muted-foreground">/mes</span>
                 )}
               </div>

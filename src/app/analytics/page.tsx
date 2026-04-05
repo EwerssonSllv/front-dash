@@ -2,14 +2,6 @@
 
 import useSWR from "swr"
 import {
-  DollarSign,
-  TrendingUp,
-  AlertTriangle,
-  Clock,
-  Users,
-  XCircle,
-} from "lucide-react"
-import {
   BarChart,
   Bar,
   XAxis,
@@ -19,9 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts"
 import { DashboardShell } from "../../components/layout/dashboard-shell"
-import { StatCard } from "../../components/cards/start-card"
 import {
-  StatCardSkeleton,
   ChartSkeleton,
   TableSkeleton,
 } from "../../components/ui/loading-skeleton"

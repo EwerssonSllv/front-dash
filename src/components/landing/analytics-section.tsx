@@ -60,7 +60,7 @@ export function AnalyticsSection() {
             Dados que impulsionam decisoes
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-            Metricas detalhadas e visualizacoes poderosas para voce entender
+            Métricas detalhadas e visualizações poderosas para voce entender
             exatamente como seu negocio esta performando.
           </p>
         </div>

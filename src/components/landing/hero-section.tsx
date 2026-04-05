@@ -9,32 +9,32 @@ export function HeroSection() {
       <div className="relative mx-auto flex max-w-7xl flex-col items-center px-6 pb-20 pt-24 text-center lg:pb-32 lg:pt-36">
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted px-4 py-1.5 text-sm text-muted-foreground">
           <span className="h-2 w-2 rounded-full bg-primary" />
-          SaaS de Gestao Financeira
+          SaaS de Gestão Financeira
         </div>
 
         <h1 className="font-heading text-balance text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl">
           Controle suas vendas.
           <br />
-          <span className="text-primary">Domine seus numeros.</span>
+          <span className="text-primary">Domine seus números.</span>
         </h1>
 
         <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
-          Dashlyze e o SaaS completo para gerenciar produtos, clientes e
-          metricas financeiras. Tudo em um so lugar, com inteligencia e
+          Dashlyze é o SaaS completo para gerenciar produtos, clientes e
+          metricas financeiras. Tudo em um so lugar, com inteligência e
           simplicidade.
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
           <Button size="lg" asChild className="gap-2 px-8">
             <Link href="/register">
-              Comecar Agora
+              Começar Agora
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
           <Button variant="outline" size="lg" asChild className="gap-2 px-8">
             <a href="#analytics">
               <Play className="h-4 w-4" />
-              Ver Demonstracao
+              Ver Demonstração
             </a>
           </Button>
         </div>
@@ -67,7 +67,7 @@ export function HeroSection() {
                   change: "+15.3%",
                 },
                 {
-                  label: "Ticket Medio",
+                  label: "Ticket Médio",
                   value: "R$ 141",
                   change: "+3.1%",
                 },

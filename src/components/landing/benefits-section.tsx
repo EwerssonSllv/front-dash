@@ -10,9 +10,9 @@ import {
 const benefits = [
   {
     icon: Package,
-    title: "Gestao de Produtos",
+    title: "Gestão de Produtos",
     description:
-      "Cadastre, edite e organize todos os seus produtos com categorias, precos e estoque em tempo real.",
+      "Cadastre, edite e organize todos os seus produtos com categorias, preços e estoque em tempo real.",
   },
   {
     icon: ShoppingCart,
@@ -22,27 +22,27 @@ const benefits = [
   },
   {
     icon: TrendingUp,
-    title: "Analise Financeira",
+    title: "Análise Financeira",
     description:
-      "Overview completo com receita, pendencias e cancelamentos. Tenha clareza sobre suas financas.",
+      "Overview completo com receita, pendencias e cancelamentos. Tenha clareza sobre suas finanças.",
   },
   {
     icon: Users,
     title: "Ranking de Clientes",
     description:
-      "Identifique seus melhores compradores, devedores e clientes mais rapidos nos pagamentos.",
+      "Identifique seus melhores compradores, devedores e clientes mais rápidos nos pagamentos.",
   },
   {
     icon: CalendarDays,
-    title: "Relatorios por Data",
+    title: "Relatórios por Data",
     description:
-      "Filtre vendas por ano, mes ou dia. Entenda padroes sazonais e tome decisoes baseadas em dados.",
+      "Filtre vendas por ano, mês ou dia. Entenda padrões sazonais e tome decisões baseadas em dados.",
   },
   {
     icon: BarChart3,
     title: "Dashboard Inteligente",
     description:
-      "Graficos interativos e metricas em tempo real para voce ter o controle total do seu negocio.",
+      "Gráficos interativos e métricas em tempo real para você ter o controle total do seu negócio.",
   },
 ]
 
@@ -52,7 +52,7 @@ export function BenefitsSection() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-            Beneficios
+            Benefícios
           </p>
           <h2 className="mt-3 font-heading text-3xl font-bold text-foreground md:text-4xl">
             Tudo que voce precisa para crescer
